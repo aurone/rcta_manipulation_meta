@@ -1,0 +1,95 @@
+ARG BASE_TAG=16.04
+FROM ubuntu:${BASE_TAG}
+LABEL maintainer="Andrew Dornbush <andrew.dornbush@gmail.com>"
+
+RUN apt-get update
+RUN apt-get install -y sudo
+RUN apt-get install -y lsb-release
+RUN apt-get install -y locales
+
+# Set the locale (for ruby)
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+ENV USER rcta
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN adduser --disabled-password --gecos '' rcta
+RUN adduser rcta sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+ENV HOME /home/rcta
+WORKDIR /home/rcta
+USER rcta
+
+#COPY rcta_installers /home/rcta/rcta_installers
+#WORKDIR /home/rcta/rcta_installers/scripts
+#RUN ./first_time_setup.sh
+
+RUN mkdir -p /home/rcta/rcta_installers/scripts
+WORKDIR /home/rcta/rcta_installers/scripts
+
+COPY --chown=rcta rcta_installers/scripts/parse_args.sh ./
+COPY --chown=rcta rcta_installers/scripts/setup_pkg_repos.sh ./
+RUN ./setup_pkg_repos.sh
+
+COPY --chown=rcta rcta_installers/scripts/install_utilities.sh ./
+RUN ./install_utilities.sh
+
+COPY --chown=rcta rcta_installers/scripts/install_base_deps.sh ./
+COPY --chown=rcta rcta_installers/scripts/ubuntu14.04/ubuntu_base_filesystem ubuntu14.04/ubuntu_base_filesystem
+COPY --chown=rcta rcta_installers/scripts/ubuntu16.04/ubuntu_base_filesystem ubuntu16.04/ubuntu_base_filesystem
+RUN ./install_base_deps.sh
+
+COPY --chown=rcta rcta_installers/scripts/install_dev_deps.sh ./
+COPY --chown=rcta rcta_installers/scripts/ubuntu14.04/ubuntu_dev_filesystem ubuntu14.04/ubuntu_dev_filesystem
+COPY --chown=rcta rcta_installers/scripts/ubuntu16.04/ubuntu_dev_filesystem ubuntu16.04/ubuntu_dev_filesystem
+RUN ./install_dev_deps.sh
+
+COPY --chown=rcta rcta_installers/scripts/install_rframe_support.sh ./
+COPY --chown=rcta rcta_installers/scripts/ubuntu14.04/gdls-support-* ubuntu14.04/
+COPY --chown=rcta rcta_installers/scripts/ubuntu16.04/gdls-support-* ubuntu16.04/
+RUN ./install_rframe_support.sh
+
+COPY --chown=rcta rcta_installers/scripts/patch_pcl_vtk.sh ./
+RUN ./patch_pcl_vtk.sh
+
+COPY --chown=rcta rcta_installers/scripts/install_jpl_support.sh ./
+COPY --chown=rcta rcta_installers/jpl ../jpl
+RUN ./install_jpl_support.sh
+
+COPY --chown=rcta rcta_installers/scripts/setup_ros.sh ./
+RUN ./setup_ros.sh
+
+# TODO: install realsense2?
+
+# Removing CUDA setup here, since we're baseing off a docker image that has CUDA
+# preconfigured. Hopefully there isn't anything special going on in this script
+COPY --chown=rcta rcta_installers/scripts/setup_cuda.sh ./
+RUN echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections && echo keyboard-configuration keyboard-configuration/layout select 'English (US)' | sudo debconf-set-selections && sudo apt-get install -y keyboard-configuration
+RUN ./setup_cuda.sh
+
+COPY --chown=rcta rcta_installers/scripts/setup_rcta_externals.sh ./
+COPY --chown=rcta rcta_installers/rcta_externals ../rcta_externals
+RUN ./setup_rcta_externals.sh
+
+WORKDIR /home/rcta
+
+COPY --chown=rcta cmake-3.13.2-Linux-x86_64.tar.gz /home/rcta/cmake-3.13.2-Linux-x86_64.tar.gz
+RUN tar xzvf cmake-3.13.2-Linux-x86_64.tar.gz
+ENV PATH="/home/rcta/cmake-3.13.2-Linux-x86_64:${PATH}"
+
+# Adding this new stuff to try and bake some of the build process into the docker
+COPY --chown=rcta rce/src /home/rcta/rce/src
+COPY --chown=rcta rce/build_tools /home/rcta/rce/build_tools
+WORKDIR /home/rcta/rce
+RUN ./build_tools/install_ros_deps.sh
+
+WORKDIR /home/rcta
+
+#RUN echo "source ~/rcta_ws/devel/setup.bash" >> /home/rcta/.bashrc
+#
+##ENTRYPOINT ["/bin/bash", "-c", "'source ~/sandbox/devel/setup.bash; exec $@'" ]
+#
+#CMD ["bash"]

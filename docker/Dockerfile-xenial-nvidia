@@ -1,0 +1,45 @@
+#FROM nvidia/cuda:8.0-devel-ubuntu16.04
+
+# The one that worked last, without OpenGL
+#FROM nvidia/cuda:8.0-runtime-ubuntu16.04
+
+#FROM nvidia/cuda:9.0-base-ubuntu16.04
+#FROM nvidia/cuda:9.0-runtime-ubuntu16.04
+#FROM nvidia/cuda:9.0-devel-ubuntu16.04
+#FROM nvidia/cuda:9.1-base-ubuntu16.04
+#FROM nvidia/cuda:9.1-runtime-ubuntu16.04
+#FROM nvidia/cuda:9.1-devel-ubuntu16.04
+#FROM nvidia/cuda:9.2-base-ubuntu16.04
+#FROM nvidia/cuda:9.2-runtime-ubuntu16.04
+#FROM nvidia/cuda:9.2-devel-ubuntu16.04
+#FROM nvidia/cuda:10.0-base-ubuntu16.04
+#FROM nvidia/cuda:10.0-runtime-ubuntu16.04
+#FROM nvidia/cuda:10.0-devel-ubuntu16.04
+
+# Requires nvidia-docker 2.0, uses glvnd, display not officially supported, GPU isolation requires driver 390+
+#FROM nvidia/opengl:base-ubuntu16.04
+#FROM nvidia/opengl:1.1-glvnd-runtime-ubuntu16.04
+#FROM nvidia/opengl:1.1-glvnd-devel-ubuntu16.04
+#FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu16.04
+#FROM nvidia/opengl:1.0-glvnd-devel-ubuntu16.04
+
+# Extend the CUDA images to add OpenGL support through libglvnd, see the OpenGL images
+#FROM nvidia/cudagl:9.0-base-ubuntu16.04
+
+# Worked with glxgears
+FROM nvidia/cudagl:9.0-runtime-ubuntu16.04
+
+#FROM nvidia/cudagl:9.0-devel-ubuntu16.04
+#FROM nvidia/cudagl:9.1-base-ubuntu16.04
+#FROM nvidia/cudagl:9.1-devel-ubuntu16.04
+#FROM nvidia/cudagl:9.1-runtime-ubuntu16.04
+#FROM nvidia/cudagl:9.2-base-ubuntu16.04
+#FROM nvidia/cudagl:9.2-devel-ubuntu16.04
+#FROM nvidia/cudagl:9.2-runtime-ubuntu16.04
+#FROM nvidia/cudagl:10.0-base-ubuntu16.04
+#FROM nvidia/cudagl:10.0-devel-ubuntu16.04
+#FROM nvidia/cudagl:10.0-runtime-ubuntu16.04
+
+RUN apt-get update
+RUN apt-get install -y mesa-utils
+
