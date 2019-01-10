@@ -1,0 +1,14 @@
+rce/*
+!rce/src
+!rce/build_tools
+rcta-indigo/*
+rcta_ws/*
+!rcta_ws/src
+rcta_installers/.git/
+rcta_installers/docker/
+rcta_installers/mmi/
+rcta_installers/rr/
+rcta_installers/upenn/
+git-lfs-2.4.0/
+git-subrepo/
+perch_ws/

@@ -1,51 +1,81 @@
-Follow instructions at https://docs.docker.com/install/linux/docker-ce/ubuntu/
-to install Docker CE.
+# Overview
+
+This repository is meant to automate/document how to set up reasonable
+development environments for working with/without the RCTA Manipulation
+stack and with/without the RCTA Collaborative Environment (RCE).
+
+# Directory structure
+
+This workspace consists of the following directory structure:
 
 RCTA_ROOT/
     docker/
     rce/
-    rcta-indigo/
     rcta_installers/
     rcta_ws/
 
+The docker directory contains several dockerfiles for different development
+environment configurations. The rce and rcta_installers directories correspond
+to the same repsoitories available from Bitbucket. The rcta_ws directory is an
+isolated catkin workspace that will contain the rcta_manipulation stack.
+
+The names of the directories are relevant, as the provided docker build and run
+scripts will mount them to build the images and during development.
+
+# Docker Installation
+
+Follow instructions at https://docs.docker.com/install/linux/docker-ce/ubuntu/
+to install Docker CE. Note that a more recent version than the one installed by
+a package manager may be required to run with NVIDIA Docker.
+
 Instructions here for Docker setup:
 
-https://roboticscta.seas.upenn.edu/confluence/display/rctasoftware/RFrame+Docker+Setup
+    https://roboticscta.seas.upenn.edu/confluence/display/rctasoftware/RFrame+Docker+Setup
 
-Various Docker Configurations:
+# Additional Requirements
 
-Ubuntu 16.04
-(Optional) NVIDIA
-(Optional) ROS Kinetic
-if ROS Kinetic
-    (Optional) RCE
-    (Optional) RCTA Manipulation
+It's unclear what version of CMake is actually required to build the RCE. The
+Confluence page lists 3.5 as the minimum required version, but I saw errors
+that said 3.13 was required. The Docker build scripts will assume a tarball
+for CMake 3.13 (cmake-3.13.2-Linux-x86_64.tar.gz) exists in $RCTA_ROOT.
 
-[-] Ubuntu 16.04
+Cloning the RCE requires Git LFS (and git-subrepo?)
 
-[ ] Ubuntu 16.04 + ROS Kinetic
-[x] Ubuntu 16.04 + ROS Kinetic + RCE
+# Docker Configurations:
 
-    The last I remember...this worked OK. Going to try now to see if I can bake
-    in the additional dependencies that get installed by rce/build.sh via
-    rce/build_tools/install_ros_deps.sh...as this takes forever on each docker
-    setup.
+All Docker images are based off of some version of the Ubuntu 16.04 (xenial)
+Linux distribution. On top of the xenial distribution, the image may contain
+additional packages for (1) NVIDIA configuration to be used by nvidia docker,
+(2) third-party dependencies used by packages in the RCE, or (3) third-party
+dependencies for the RCTA Manipulation stack. All images contain the Kinetic
+distribution of ROS.
 
-[ ] Ubuntu 16.04 + ROS Kinetic + RCTA Manipulation
-[ ] Ubuntu 16.04 + ROS Kinetic + RCE + RCTA Manipulation
+For NVIDIA configurations, 2.0 is the targeted version of NVIDIA Docker.
 
-[x] Ubuntu 16.04 + NVIDIA
+# Outstanding Issues
 
-[x] Ubuntu 16.04 + NVIDIA + ROS Kinetic
+## Ubuntu + RCE
 
-    This seems to work fine.
+The last I remember...this worked OK. Going to try now to see if I can bake in
+the additional dependencies that get installed by rce/build.sh via
+rce/build_tools/install_ros_deps.sh...as this takes forever on each docker
+setup.
 
-[x] Ubuntu 16.04 + NVIDIA + ROS Kinetic + RCE
+## Ubuntu + RCTA Manipulation
 
-    Failed to build RCE because of conflicting nvidia packages. The base image
-    installs one version of various CUDA packages and the RCE requires versions
-    used by PyTorch or something similar:
+Works fine.
 
+## Ubuntu + RCE + RCTA Manipulation
+
+TODO
+
+## Ubuntu + NVIDIA + RCE
+
+Failed to build RCE because of conflicting nvidia packages. The base image
+installs one version of various CUDA packages and the RCE requires versions
+used by PyTorch or something similar:
+
+```sh
 Errors were encountered while processing:
  nvidia-410
  nvidia-410-dev
@@ -81,20 +111,34 @@ ERROR: the following rosdeps failed to install
   apt: command [sudo -H apt-get install -y ros-kinetic-interactive-marker-twist-server] failed
   apt: command [sudo -H apt-get install -y ros-kinetic-hector-mapping] failed
   apt: Failed to detect successful installation of [ros-kinetic-pytorch]
+```
 
-[x] Ubuntu 16.04 + NVIDIA + ROS Kinetic + RCTA Manipulation
+## Ubuntu + NVIDIA + RCTA Manipulation
 
-    This also seems to work fine.
+Works fine.
 
-[ ] Ubuntu 16.04 + NVIDIA + ROS Kinetic + RCE + RCTA Manipulation
+## Ubuntu + NVIDIA + RCE + RCTA_MANIPULATION
 
-#    --env="DISPLAY" \
-#    --env="QT_X11_NO_MITSHM=1" \
-#    -e NVIDIA_VISIBLE_DEVICES=all \
-#    -e NVIDIA_DRIVER_CAPABILITIES=video,compute,utility,graphics \
-#    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-#    --env="XAUTHORITY=$XAUTH" \
-#    --volume="$XAUTH:$XAUTH" \
-#    -v /tmp/.X11-unix:/tmp/.X11-unix \
-# TODO: need to figure out why --network host kills graphics D:
-#    --network host \
+TODO
+
+# Reference for some docker container run arguments that may be required for NVIDIA Docker configurations
+
+```sh
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    -e NVIDIA_VISIBLE_DEVICES=all \
+    -e NVIDIA_DRIVER_CAPABILITIES=video,compute,utility,graphics \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    --env="XAUTHORITY=$XAUTH" \
+    --volume="$XAUTH:$XAUTH" \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+ TODO: need to figure out why --network host kills graphics D:
+    --network host \
+```
+
+# TODO
+
+Worth using git submodules/subtrees/subrepos to mark compatible versions of RCE
+and RCTA Manipulation?
+
+Include building PERCH
