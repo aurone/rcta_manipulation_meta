@@ -39,6 +39,10 @@ Confluence page lists 3.5 as the minimum required version, but I saw errors
 that said 3.13 was required. The Docker build scripts will assume a tarball
 for CMake 3.13 (cmake-3.13.2-Linux-x86_64.tar.gz) exists in $RCTA_ROOT.
 
+TODO: So I thought CMake 3.13 was being used, but the PATH variable wasn't set
+right and rce built fine using the system install of CMake on xenial...maybe
+this _can_ be removed.
+
 Cloning the RCE requires Git LFS (and git-subrepo?)
 
 # Docker Configurations:
@@ -67,7 +71,31 @@ Works fine.
 
 ## Ubuntu + RCE + RCTA Manipulation
 
-TODO
+Tested this with a bit of manual setup:
+
+(1) Modify the start-xenial-rce.sh script to mount rcta_ws into the home directory
+
+(2) Install some missing dependencies: libqwt-dev, ros-kinetic-soem,
+    ros-kinetic-socketcan-interface
+
+  I'm not sure if all of these are required. libqwt-dev probably is, the other
+  two might be depenencies on some local things I have in rcta_ws that aren't
+  required to build the RCTA Manipulation stack.
+
+(3) Install sbpl into the home directory within the container
+
+      git clone https://github.com/sbpl/sbpl && cd sbpl && mkdir build && \
+          mkdir install && cd build && cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/home/rcta/sbpl/install && make && make install
+
+(4) Install libgoogleperftools-dev. A custom version of this already exists on
+    the system that the rcta_ws build doesn't find. Hopefully not screwing too
+    much else up by installing the dist-level version.
+
+(5) Build the rcta_ws workspace, which extends /home/rcta/rce, and uses the
+    custom (,system dep version of) sbpl
+
+    sbpl_DIR=/home/rcta/sbpl/install catkin build --cmake-args -DSMPL_MOVEIT_INTERFACE_QT5=ON
 
 ## Ubuntu + NVIDIA + RCE
 

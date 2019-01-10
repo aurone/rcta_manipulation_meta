@@ -33,6 +33,7 @@ docker container run \
     -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     -v "$XAUTH:$XAUTH" \
     -v "$RCTA_ROOT/rce:/home/rcta/rce:rw" \
+    -v "$RCTA_ROOT/rcta_ws:/home/rcta/rcta_ws:rw" \
     -h $CONTAINER \
     --name $CONTAINER \
     $DOCKERID/$CONTAINER:$TAG \
