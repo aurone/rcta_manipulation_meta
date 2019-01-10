@@ -6,18 +6,25 @@ stack and with/without the RCTA Collaborative Environment (RCE).
 
 # Directory structure
 
-This workspace consists of the following directory structure:
+You'll need to set up the following directory structure for this to work:
 
+```
 RCTA_ROOT/
     docker/
     rce/
     rcta_installers/
     rcta_ws/
+```
+
+where RCTA_ROOT is the path to this repository and RCTA_ROOT is in your
+environment so the docker build scripts can reference it.
 
 The docker directory contains several dockerfiles for different development
 environment configurations. The rce and rcta_installers directories correspond
 to the same repsoitories available from Bitbucket. The rcta_ws directory is an
-isolated catkin workspace that will contain the rcta_manipulation stack.
+isolated catkin workspace that will contain the rcta_manipulation stack (you
+need to create this and pull in all the source packages it needs as if you were
+working only with [RCTA Manipulation](https://github.com/aurone/rcta_manipulation)).
 
 The names of the directories are relevant, as the provided docker build and run
 scripts will mount them to build the images and during development.
