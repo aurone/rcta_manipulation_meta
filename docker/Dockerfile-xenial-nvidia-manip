@@ -49,4 +49,10 @@ RUN bash -c 'source /opt/ros/kinetic/setup.bash && rosdep install -i -y --from-p
 
 RUN echo "source ~/rcta_ws/devel/setup.bash" >> /home/rcta/.bashrc
 
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+ENV PATH /usr/local/nvidia/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}
+
+RUN sudo apt install -y net-tools gdb iputils-ping mesa-utils
+
 CMD ["bash"]
