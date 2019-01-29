@@ -1,12 +1,57 @@
 # Overview
 
-This repository is meant to automate/document how to set up reasonable
-development environments for working with/without the RCTA Manipulation
-stack and with/without the RCTA Collaborative Environment (RCE).
+This is a meta-repository that provides a stable development environment for
+building and deploying the RCTA Manipulation stack, with and without the RCTA
+Collaborative Environment (RCE), using docker.
 
-# Directory structure
+# Getting Started
 
-You'll need to set up the following directory structure for this to work:
+0. Install Docker and NVIDIA Docker
+
+These instructions are known to work with Docker 18.06.1-ce and NVIDIA Docker
+1.0. You may want to follow the additional instructions for using docker without
+invoking root privileges.
+
+1. Clone this repository
+
+```sh
+git clone https://github.com/aurone/rcta_manipulation_meta
+```
+
+2. Set the RCTA_ROOT environment variable
+
+Set this environment variable to the path to this repository. The build and run
+scripts will use this environment variable to denote the docker context and
+the volume to mount for development.
+
+3. Create the catkin workspace for RCTA Manipulation
+
+Create the following directory structure to house the catkin workspace:
+
+```
+RCTA_ROOT/
+  rcta_ws/
+    src/
+```
+
+4. Clone the RCTA Manipulation stack and its source dependencies:
+
+```sh
+cd $RCTA_ROOT/rcta_ws/src
+wstool init
+git clone https://github.com/aurone/rcta_manipulation
+wstool merge rcta_manipulation/rcta.rosinstall
+wstool update
+```
+
+The `wstool` command is used to track the locations and versions of required
+source dependencies. At this point, you have enough to build the development
+environment for the standalone RCTA Manipulation stack.
+
+5. Optionally, clone the RCE and its external dependencies
+
+Instructions for cloning the RCE are not provided here, but the directory
+structure in RCTA_ROOT should look like this:
 
 ```
 RCTA_ROOT/
@@ -16,18 +61,30 @@ RCTA_ROOT/
     rcta_ws/
 ```
 
-where RCTA_ROOT is the path to this repository and RCTA_ROOT is in your
-environment so the docker build scripts can reference it.
+6. Build the docker environment
 
-The docker directory contains several dockerfiles for different development
-environment configurations. The rce and rcta_installers directories correspond
-to the same repsoitories available from Bitbucket. The rcta_ws directory is an
-isolated catkin workspace that will contain the rcta_manipulation stack (you
-need to create this and pull in all the source packages it needs as if you were
-working only with [RCTA Manipulation](https://github.com/aurone/rcta_manipulation)).
+The docker directory contains several Dockerfiles for different development
+environments. In the docker directory, scripts of the form build-* each build a
+different environment. The name of the script determines whether the environment
+is setup to use NVIDIA Docker (for OpenGL applications), whether the RCTA
+Manipulation stack is included, and whether the RCE is included. For example,
+running
 
-The names of the directories are relevant, as the provided docker build and run
-scripts will mount them to build the images and during development.
+```sh
+./build-xenial-nvidia-manip.sh
+```
+
+will build an environment with NVIDIA extensions and the RCTA Manipulation stack.
+
+The scripts of the form start-* create the corresponding container running an
+interactive bash shell. For example, running
+
+```
+./start-xenial-nvidia-manip.sh
+```
+
+will create a bash shell in the corresponding container, under the `rcta` user,
+ready for development.
 
 # Docker Installation
 
@@ -35,7 +92,7 @@ Follow instructions at https://docs.docker.com/install/linux/docker-ce/ubuntu/
 to install Docker CE. Note that a more recent version than the one installed by
 a package manager may be required to run with NVIDIA Docker.
 
-Instructions here for Docker setup:
+The RCE also provides docker environments. Instructions here for Docker setup:
 
     https://roboticscta.seas.upenn.edu/confluence/display/rctasoftware/RFrame+Docker+Setup
 
@@ -67,14 +124,11 @@ For NVIDIA configurations, 2.0 is the targeted version of NVIDIA Docker.
 
 ## Ubuntu + RCE
 
-The last I remember...this worked OK. Going to try now to see if I can bake in
-the additional dependencies that get installed by rce/build.sh via
-rce/build_tools/install_ros_deps.sh...as this takes forever on each docker
-setup.
+Working.
 
 ## Ubuntu + RCTA Manipulation
 
-Works fine.
+Working.
 
 ## Ubuntu + RCE + RCTA Manipulation
 
@@ -148,6 +202,10 @@ ERROR: the following rosdeps failed to install
   apt: Failed to detect successful installation of [ros-kinetic-pytorch]
 ```
 
+This may no longer be an issue since reverting to NVIDIA Docker 1, though it
+needs to be tested exactly which packages are required with NVIDIA Docker 1 to
+use OpenGL functionality.
+
 ## Ubuntu + NVIDIA + RCTA Manipulation
 
 Works fine.
@@ -155,21 +213,6 @@ Works fine.
 ## Ubuntu + NVIDIA + RCE + RCTA_MANIPULATION
 
 TODO
-
-# Reference for some docker container run arguments that may be required for NVIDIA Docker configurations
-
-```sh
-    --env="DISPLAY" \
-    --env="QT_X11_NO_MITSHM=1" \
-    -e NVIDIA_VISIBLE_DEVICES=all \
-    -e NVIDIA_DRIVER_CAPABILITIES=video,compute,utility,graphics \
-    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-    --env="XAUTHORITY=$XAUTH" \
-    --volume="$XAUTH:$XAUTH" \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
- TODO: need to figure out why --network host kills graphics D:
-    --network host \
-```
 
 # TODO
 
