@@ -46,13 +46,14 @@ TAG=1.0
 #    -v "/etc/passwd:/etc/passwd:ro" \
 #    -v "/etc/shadow:/etc/shadow:ro" \
 #    -v "/etc/sudoers.d:/etc/sudoers.d:ro" \
+
+#    --env="ROS_MASTER_URI=http://tl1-1-am1:11311" \
 nvidia-docker container run \
     --rm \
     -it \
     --privileged \
     --network host \
     --env="QT_X11_NO_MITSHM=1" \
-    --env="ROS_MASTER_URI=http://tl1-1-am1:11311" \
     --env="DISPLAY=$DISPLAY" \
     -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     -v "$RCTA_ROOT/rcta_ws:/home/rcta/rcta_ws:rw" \
