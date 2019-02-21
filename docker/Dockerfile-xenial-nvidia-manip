@@ -55,6 +55,6 @@ ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_P
 
 RUN echo 'export LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH' >> /home/rcta/.bashrc
 
-RUN sudo apt install -y net-tools gdb iputils-ping mesa-utils
+RUN sudo apt install -y net-tools gdb iputils-ping mesa-utils valgrind
 
 CMD ["bash"]
