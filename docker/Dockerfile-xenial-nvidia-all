@@ -1,0 +1,17 @@
+FROM aurone/rcta-xenial-nvidia-rce:1.0
+LABEL maintainer="Andrew Dornbush <andrew.dornbush@gmail.com>"
+
+# clone, configure, build, and install sbpl source dependency
+RUN git clone https://github.com/sbpl/sbpl.git && cd sbpl && mkdir build && cd build && cmake .. && make && sudo make install
+
+COPY --chown=rcta rcta_ws/src /home/rcta/rcta_ws/src
+RUN bash -c 'source /opt/ros/kinetic/setup.bash && sudo apt-get update && rosdep install -i -y --from-paths /home/rcta/rcta_ws/src'
+
+RUN echo "source ~/rcta_ws/devel/setup.bash" >> /home/rcta/.bashrc
+RUN echo 'export LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH' >> /home/rcta/.bashrc
+RUN sudo apt-get update && sudo apt install -y net-tools gdb iputils-ping mesa-utils valgrind
+
+RUN sudo apt-get update && sudo apt-get install -y libqwt-dev
+
+CMD ["bash"]
+
