@@ -19,10 +19,11 @@ docker container run \
     --runtime=nvidia \
     --rm \
     -it \
+    --network host \
     --env="XAUTHORITY=$XAUTH" \
     --env="DISPLAY=$DISPLAY" \
-    --v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-    --v "$XAUTH:$XAUTH" \
+    -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -v "$XAUTH:$XAUTH" \
     -h $CONTAINER \
     --name $CONTAINER \
     $DOCKERID/$CONTAINER:$TAG \
