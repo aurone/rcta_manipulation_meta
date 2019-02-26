@@ -1,6 +1,7 @@
+docker/rcta_docker/*
 rce/*
 !rce/src
-!rce/build_tools
+!rce/build-tools
 rcta-indigo/*
 rcta_ws/*
 !rcta_ws/src
