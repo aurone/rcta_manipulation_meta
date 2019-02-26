@@ -160,51 +160,7 @@ Tested this with a bit of manual setup:
 
 ## Ubuntu + NVIDIA + RCE
 
-Failed to build RCE because of conflicting nvidia packages. The base image
-installs one version of various CUDA packages and the RCE requires versions
-used by PyTorch or something similar:
-
-```sh
-Errors were encountered while processing:
- nvidia-410
- nvidia-410-dev
- libcuda1-410
- nvidia-opencl-icd-410
- cuda-drivers
- cuda-runtime-9-2
- cuda-demo-suite-9-2
- cuda-9-2
- ros-kinetic-cudnn-9-2
- ros-kinetic-pytorch
-E: Sub-process /usr/bin/dpkg returned an error code (1)
-ERROR: the following rosdeps failed to install
-  apt: command [sudo -H apt-get install -y ros-kinetic-nmea-navsat-driver] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-multimaster-launch] failed
-  apt: Failed to detect successful installation of [ros-kinetic-nmea-navsat-driver]
-  apt: Failed to detect successful installation of [ros-kinetic-multimaster-launch]
-  apt: command [sudo -H apt-get install -y ros-kinetic-pytorch] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-octomap-ros] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-gazebo-plugins] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-g2o] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-laser-assembler] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-imu-filter-madgwick] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-gazebo-ros-control] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-joint-trajectory-controller] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-ros-controllers] failed
-  apt: command [sudo -H apt-get install -y python-pyside] failed
-  apt: command [sudo -H apt-get install -y libpyside-dev] failed
-  apt: command [sudo -H apt-get install -y libshiboken-dev] failed
-  apt: command [sudo -H apt-get install -y shiboken] failed
-  apt: command [sudo -H apt-get install -y python-qt4] failed
-  apt: command [sudo -H apt-get install -y python-qt4-dev] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-interactive-marker-twist-server] failed
-  apt: command [sudo -H apt-get install -y ros-kinetic-hector-mapping] failed
-  apt: Failed to detect successful installation of [ros-kinetic-pytorch]
-```
-
-This may no longer be an issue since reverting to NVIDIA Docker 1, though it
-needs to be tested exactly which packages are required with NVIDIA Docker 1 to
-use OpenGL functionality.
+Working with NVIDIA Docker 1.
 
 ## Ubuntu + NVIDIA + RCTA Manipulation
 
@@ -212,7 +168,10 @@ Works fine.
 
 ## Ubuntu + NVIDIA + RCE + RCTA_MANIPULATION
 
-TODO
+Does NOT work fine. RCE builds OK (using latest RCE master branch t3 profile
+though). Manipulation build is mad broken because of package conflicts between
+pre-packaged versions of smpl* packages and in-source versions of smpl*
+packages.
 
 # TODO
 
