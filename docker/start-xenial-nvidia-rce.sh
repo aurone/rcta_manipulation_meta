@@ -4,27 +4,30 @@ DOCKERID=aurone
 CONTAINER=rcta-xenial-nvidia-rce
 TAG=1.0
 
-XAUTH=/tmp/.docker.xauth
-if [ ! -f $XAUTH ]; then
-    xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
-    if [ ! -z "$xauth_list" ]; then
-        echo $xauth_list | xauth -f $XAUTH nmerge -
-    else
-        touch $XAUTH
-    fi
-    chmod a+r $XAUTH
-fi
+#XAUTH=/tmp/.docker.xauth
+#if [ ! -f $XAUTH ]; then
+#    xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
+#    if [ ! -z "$xauth_list" ]; then
+#        echo $xauth_list | xauth -f $XAUTH nmerge -
+#    else
+#        touch $XAUTH
+#    fi
+#    chmod a+r $XAUTH
+#fi
 
-docker container run \
-    --runtime=nvidia \
+#    --runtime=nvidia \
+#    --env="XAUTHORITY=$XAUTH" \
+#    -v "$XAUTH:$XAUTH" \
+nvidia-docker container run \
     --rm \
     -it \
-    --env="XAUTHORITY=$XAUTH" \
+    --privileged \
+    --network host \
+    --env="QT_X11_NO_MITSHM=1" \
     --env="DISPLAY=$DISPLAY" \
     -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-    -v "$XAUTH:$XAUTH" \
     -v "$RCTA_ROOT/rce:/home/rcta/rce:rw" \
-    -h $CONTAINER \
+    -h $(hostname) \
     --name $CONTAINER \
     $DOCKERID/$CONTAINER:$TAG \
     bash
