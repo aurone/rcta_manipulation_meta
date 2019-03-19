@@ -2,10 +2,11 @@ docker/rcta_docker/*
 rce/*
 !rce/src
 !rce/build-tools
+rce/src/data/worldmodel_data/maps_lejeune
 rcta-indigo/*
 rcta_ws/*
 !rcta_ws/src
-rcta_installers/.git/
+#rcta_installers/.git/
 rcta_installers/docker/
 rcta_installers/mmi/
 rcta_installers/rr/
@@ -13,3 +14,11 @@ rcta_installers/upenn/
 git-lfs-2.4.0/
 git-subrepo/
 perch_ws/
+**/.git/*
+**/*.jpg
+**/*.bmp
+**/*.msi
+**/*.exe
+**/*.bag
+**/*.caffemodel
+**/*.tif
