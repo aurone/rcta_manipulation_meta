@@ -45,7 +45,11 @@ RUN rosdep update
 RUN git clone https://github.com/sbpl/sbpl.git && cd sbpl && mkdir build && cd build && cmake .. && make && sudo make install
 
 COPY --chown=rcta rcta_ws/src /home/rcta/rcta_ws/src
-RUN bash -c 'source /opt/ros/kinetic/setup.bash && rosdep install -i -y --from-paths /home/rcta/rcta_ws/src'
+
+# -r argument on rosdep install so that we can build packages
+COPY --chown=rcta docker/install_rosdeps.sh install_rosdeps.sh
+RUN ./install_rosdeps.sh
+#RUN bash -c 'source /opt/ros/kinetic/setup.bash && sudo apt update && rosdep install -i -y -r --from-paths /home/rcta/rcta_ws/src'
 
 RUN echo "source ~/rcta_ws/devel/setup.bash" >> /home/rcta/.bashrc
 
