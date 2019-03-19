@@ -99,9 +99,9 @@ RUN ./setup_rcta_externals.sh
 
 WORKDIR /home/rcta
 
-COPY --chown=rcta cmake-3.13.2-Linux-x86_64.tar.gz /home/rcta/cmake-3.13.2-Linux-x86_64.tar.gz
-RUN tar xzvf cmake-3.13.2-Linux-x86_64.tar.gz
-ENV PATH="/home/rcta/cmake-3.13.2-Linux-x86_64:${PATH}"
+#COPY --chown=rcta cmake-3.13.2-Linux-x86_64.tar.gz /home/rcta/cmake-3.13.2-Linux-x86_64.tar.gz
+#RUN tar xzvf cmake-3.13.2-Linux-x86_64.tar.gz
+#ENV PATH="/home/rcta/cmake-3.13.2-Linux-x86_64:${PATH}"
 
 COPY --chown=rcta rce/src /home/rcta/rce/src
 COPY --chown=rcta rce/build-tools /home/rcta/rce/build-tools
